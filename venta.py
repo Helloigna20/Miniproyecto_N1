@@ -1,10 +1,20 @@
 import tkinter as tk
 from tkinter import ttk # Importamos ttk para widgets más modernos y estilizados como Treeview
 
-def abrir_ventana_venta(productos):
+def abrir_ventana_venta():
+    
+    productos= {
+        "Pan": {"precio": 1400.25, "stock": 10},
+        "Leche": {"precio": 1800.50, "stock": 10},
+        "Arroz": {"precio": 1200.00, "stock": 10},
+        "Aceite": {"precio": 900.25, "stock": 10},
+        "Gaseosa": {"precio": 2300.50, "stock": 10},
+        "Fideos": {"precio": 1000.00, "stock": 10},
+    }
+
     ventana_venta = tk.Toplevel()
     ventana_venta.title("Venta - Organización de Elementos")
-    ventana_venta.geometry("1024x900")
+    ventana_venta.geometry("1024x600")
     ventana_venta.iconbitmap("Assets/Carrito.ico") # Aca también agregamos el icono.
 
     # Configuración del menú
@@ -50,41 +60,39 @@ def abrir_ventana_venta(productos):
 
     tk.Label(frame_izquierda, text="Productos Disponibles", font=("Arial", 16, "bold")).grid(row=0, column=0, pady=10, columnspan=2)
 
-    # Usamos un Treeview para mostrar los productos de manera tabular
-    # Se ajusta al tamaño de la celda donde está contenido
-    productos_tree = ttk.Treeview(frame_izquierda, columns=("ProductoNombre", "Precio", "Stock"), show="headings", height=10)
-    productos_tree.grid(row=1, column=0, sticky="nsew", padx=(10,0), pady=10 )
+    #usamos frame para manejar las cards de los productos
+    productos_frame = ttk.Frame(frame_izquierda)
+    productos_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
+    productos_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)  # Hasta 4 por fila
+    imagen_card = tk.PhotoImage(file="./Assets/producto.png").subsample(4, 4)  
+   
+    fila = 0
+    columna = 0
 
-    # Define el encabezado de la columna principal
-    productos_tree.heading("#0", text="Producto")
-    productos_tree.column("#0", width=250, anchor="w", stretch=tk.YES)
+    for nombre, detalles in productos.items():
+        card = tk.Frame(productos_frame, bd=2, relief="groove", padx=10, pady=10, bg="#ffffff")
+        card.grid(row=fila, column=columna, padx=5, pady=5, sticky="nsew")
 
-    # Definir encabezados de columnas
-    productos_tree.heading("ProductoNombre", text="Producto")
-    productos_tree.heading("Precio", text="Precio")
-    productos_tree.heading("Stock", text="Stock")
+        if imagen_card:
+            tk.Label(card, image=imagen_card).pack()
+        tk.Label(card, text=nombre, font=("Arial", 12, "bold"), bg="#ffffff").pack()
+        tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Arial", 10), bg="#ffffff").pack()
+        tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Arial", 10, "italic"), bg="#ffffff").pack()
+        
+        # Frame para agrupar los botones + y -
+        botones_frame = tk.Frame(card, bg="#e0f7fa")
+        botones_frame.pack(pady=5)
+        tk.Button(botones_frame, text="+", width=3, bg="#b2ebf2").pack(side="left", padx=2)
+        tk.Button(botones_frame, text="-", width=3, bg="#ffcdd2").pack(side="left", padx=2)
 
-    # Configurar el ancho de las columnas 
-    productos_tree.column("ProductoNombre", width=250, anchor="w", stretch=tk.YES)
-    productos_tree.column("Precio", width=100, anchor="center")
-    productos_tree.column("Stock", width=80, anchor="center")
+        columna += 1
+        if columna > 3:  # 4 columnas
+            columna = 0
+            fila += 1
 
+    # Evita que la imagen desaparezca
+    productos_frame.image = imagen_card
 
-    # Barra de desplazamiento para el Treeview
-    scrollbar = ttk.Scrollbar(frame_izquierda, orient="vertical", command=productos_tree.yview)
-    scrollbar.grid(row=1, column=1, sticky="ns", padx=(0,10)) # Colocado al lado derecho del Treeview
-    productos_tree.configure(yscrollcommand=scrollbar.set)
-
-    # Rellenar el Treeview con los productos del diccionario
-    if productos:
-        for nombre, detalles in productos.items():
-            precio = detalles.get("precio", "N/A")
-            stock = detalles.get("stock", "N/A")
-
-            productos_tree.insert("", "end", values=(nombre, f"${precio:.2f}", stock))
-    else:
-        # Si no hay productos, puedes insertar un mensaje o deshabilitar el Treeview
-        productos_tree.insert("", "end", values=("No hay productos para mostrar", "", ""))
 
     # Contenido para frame_derecha_arriba (El Carrito Actual) 
     frame_derecha_arriba.grid_rowconfigure(0, weight=0)
