@@ -17,6 +17,39 @@ def abrir_ventana_venta():
     ventana_venta.geometry("1024x600")
     ventana_venta.iconbitmap("Assets/Carrito.ico") # Aca también agregamos el icono.
 
+# Agregamos estructuras para carrito y stock visual
+    carrito = {}
+    stock_labels = {}
+
+    def actualizar_carrito():
+        carrito_listbox.delete(0, tk.END)
+        total = 0
+        for nombre, cantidad in carrito.items():
+            precio_unitario = productos[nombre]["precio"]
+            subtotal = precio_unitario * cantidad
+            total += subtotal
+            carrito_listbox.insert(tk.END, f"{nombre} x{cantidad} - ${subtotal:.2f}")
+        total_label.config(text=f"Total: ${total:.2f}")
+
+    def actualizar_stock_visual(nombre):
+        stock_labels[nombre].config(text=f"Stock: {productos[nombre]['stock']}")
+
+    def agregar_al_carrito(nombre):
+        if productos[nombre]["stock"] > 0:
+            productos[nombre]["stock"] -= 1
+            carrito[nombre] = carrito.get(nombre, 0) + 1
+            actualizar_carrito()
+            actualizar_stock_visual(nombre)
+
+    def quitar_del_carrito(nombre):
+        if nombre in carrito and carrito[nombre] > 0:
+            carrito[nombre] -= 1
+            productos[nombre]["stock"] += 1
+            if carrito[nombre] == 0:
+                del carrito[nombre]
+            actualizar_carrito()
+            actualizar_stock_visual(nombre)
+
     # Configuración del menú
     menu_barra = tk.Menu(ventana_venta)
     ventana_venta.config(menu=menu_barra)
@@ -77,13 +110,22 @@ def abrir_ventana_venta():
             tk.Label(card, image=imagen_card).pack()
         tk.Label(card, text=nombre, font=("Arial", 12, "bold"), bg="#ffffff").pack()
         tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Arial", 10), bg="#ffffff").pack()
-        tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Arial", 10, "italic"), bg="#ffffff").pack()
+        
+         # Guardamos la etiqueta de stock
+        stock_label = tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Arial", 10, "italic"), bg="#ffffff")
+        stock_label.pack()
+        stock_labels[nombre] = stock_label
         
         # Frame para agrupar los botones + y -
         botones_frame = tk.Frame(card, bg="#e0f7fa")
         botones_frame.pack(pady=5)
-        tk.Button(botones_frame, text="+", width=3, bg="#b2ebf2").pack(side="left", padx=2)
-        tk.Button(botones_frame, text="-", width=3, bg="#ffcdd2").pack(side="left", padx=2)
+    
+        #Comandos vinculados
+        tk.Button(botones_frame, text="+", width=3, bg="#b2ebf2",
+                  command=lambda n=nombre: agregar_al_carrito(n)).pack(side="left", padx=2)
+        tk.Button(botones_frame, text="-", width=3, bg="#ffcdd2",
+                  command=lambda n=nombre: quitar_del_carrito(n)).pack(side="left", padx=2)
+
 
         columna += 1
         if columna > 3:  # 4 columnas
