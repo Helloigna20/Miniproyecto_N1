@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk # Importamos ttk para widgets más modernos y estilizados como Treeview
+from tkinter import messagebox
 
 def abrir_ventana_venta():
     
@@ -49,6 +50,34 @@ def abrir_ventana_venta():
                 del carrito[nombre]
             actualizar_carrito()
             actualizar_stock_visual(nombre)
+
+    def confirmar_compra():
+        # Obtener el total actual del label
+        total_texto = total_label.cget("text") 
+        # Extraer solo el número del total (ej. de "Total: $1234.56" a "1234.56")
+        try:
+            # Quitamos el "Total: $" y si hubiera comas de miles
+            total_str = total_texto.replace("Total: $", "").replace(",", "") 
+            total_float = float(total_str)
+        except ValueError:
+            messagebox.showerror("Error", "No se pudo obtener el total de la compra.")
+            return
+
+        # Valida si el carrito está vacío
+        if not carrito:
+            messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito para confirmar la compra.", parent=ventana_venta)
+            return
+        
+        # Mostrar el cuadro de diálogo de confirmación
+        confirmar = messagebox.askyesno("Confirmar Compra", f"El total de la compra es ${total_float:.2f}\n¿Desea confirmar la compra?", parent=ventana_venta)
+
+        if confirmar:
+            messagebox.showinfo("Compra Confirmada", "¡Compra realizada con éxito!", parent=ventana_venta)
+            carrito.clear()
+            actualizar_carrito()
+            
+        else:
+            messagebox.showinfo("Compra Cancelada", "La compra ha sido cancelada.", parent=ventana_venta)
 
     # Configuración del menú
     menu_barra = tk.Menu(ventana_venta)
@@ -159,5 +188,5 @@ def abrir_ventana_venta():
     total_label = tk.Label(frame_derecha_abajo, text="Total: $0.00", font=("Arial", 12))
     total_label.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
-    tk.Button(frame_derecha_abajo, text="Realizar Compra").grid(row=2, column=0, pady=5)
+    tk.Button(frame_derecha_abajo, text="Realizar Compra", command=confirmar_compra).grid(row=2, column=0, pady=5)
     tk.Button(frame_derecha_abajo, text="Vaciar Carrito").grid(row=3, column=0, pady=5)
