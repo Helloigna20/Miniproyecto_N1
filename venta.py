@@ -50,7 +50,7 @@ def abrir_ventana_venta():
         messagebox.showinfo("Carrito", "El carrito se ha vaciado con éxito")
 
     stock_labels = {}  # Almacena las referencias a los labels de stock
-
+    
     def confirmar_compra():
         total_texto = total_label.cget("text") 
 
@@ -77,6 +77,7 @@ def abrir_ventana_venta():
             
         else:
             messagebox.showinfo("Compra Cancelada", "La compra ha sido cancelada.", parent=ventana_venta)
+
 
     def actualizar_stock_labels():  # Actualiza los labels de stock
         for nombre, label in stock_labels.items():
