@@ -5,12 +5,24 @@ from tkinter import messagebox  # Para mostrar mensajes emergentes
 def abrir_ventana_venta():
 
     productos= {
-        "Pan": {"precio": 1400.25, "stock": 10},
-        "Leche": {"precio": 1800.50, "stock": 10},
-        "Arroz": {"precio": 1200.00, "stock": 10},
-        "Aceite": {"precio": 900.25, "stock": 10},
-        "Gaseosa": {"precio": 2300.50, "stock": 10},
-        "Fideos": {"precio": 1000.00, "stock": 10},
+        "Pan blanco": {"precio": 1400.25, "stock": 10, "imagen": "./Assets/pan_blanco.png"},
+        "Pan integral": {"precio": 2300, "stock": 6, "imagen": "./Assets/pan_integral.png"},
+        "Fideos tallarín": {"precio": 1140, "stock": 20, "imagen": "./Assets/fideos_tallarin.png"},
+        "Fideos codito": {"precio": 980.50, "stock": 15, "imagen": "./Assets/fideos_codito.png"},
+        "Fideos tirabuzon": {"precio": 1200, "stock": 15, "imagen": "./Assets/fideos_tirabuzon.png"},
+        "Arroz": {"precio": 1750, "stock": 20, "imagen": "./Assets/arroz.png"},
+        "Leche entera": {"precio": 2500, "stock": 12, "imagen": "./Assets/leche_entera.png"},
+        "Leche descremada": {"precio": 2750, "stock": 12, "imagen": "./Assets/leche_descremada.png"},
+        "Queso cremoso (500 g)": {"precio": 5500, "stock": 10, "imagen": "./Assets/queso_cremoso.png"},
+        "Yerba común": {"precio": 4500, "stock": 16, "imagen": "./Assets/yerba_comun.png"},
+        "Yerba saborizada": {"precio": 2600, "stock": 14, "imagen": "./Assets/yerba_saborizada.png"},
+        "Té": {"precio": 1000, "stock": 12, "imagen": "./Assets/te.png"},
+        "Café instantaneo": {"precio": 6500, "stock": 8, "imagen": "./Assets/cafe_instantaneo.png"},
+        "Azúcar": {"precio": 1200, "stock": 10, "imagen": "./Assets/azucar.png"},
+        "Harina común": {"precio": 2300, "stock": 10, "imagen": "./Assets/harina_comun.png"},
+        "Aceite de girasol": {"precio": 1300, "stock": 8, "imagen": "./Assets/aceite_girasol.png"},
+        "Aceite de oliva": {"precio": 6500.30, "stock": 8, "imagen": "./Assets/aceite_oliva.png"},
+        "Huevos blancos (doc)": {"precio": 4200, "stock": 8, "imagen": "./Assets/huevos.png"},
     }
 
     carrito = {}  #  Diccionario para almacenar productos en el carrito
@@ -57,7 +69,7 @@ def abrir_ventana_venta():
 
     ventana_venta = tk.Toplevel()
     ventana_venta.title("Venta - Organización de Elementos")
-    ventana_venta.geometry("1024x600")
+    ventana_venta.geometry("1200x600")
     ventana_venta.iconbitmap("Assets/Carrito.ico") # Aca también agregamos el icono.
 
     # Configuración del menú
@@ -107,17 +119,27 @@ def abrir_ventana_venta():
     productos_frame = ttk.Frame(frame_izquierda)
     productos_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
     productos_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)  # Hasta 4 por fila
-    imagen_card = tk.PhotoImage(file="./Assets/producto.png").subsample(4, 4)  
+    
 
     fila = 0
     columna = 0
 
     for nombre, detalles in productos.items():
+        ruta_imagen = detalles.get('imagen')
+
+
+        if ruta_imagen != None:
+            imagen = tk.PhotoImage(file=ruta_imagen).subsample(10, 10)
+        else:
+            print(f"No se puedo cargar la imagen {nombre} : {ruta_imagen}")
+            imagen = tk.PhotoImage(file='./Assets/producto.png').subsample(10, 10)
+    
+        productos[nombre] = imagen
+      
         card = tk.Frame(productos_frame, bd=2, relief="groove", padx=10, pady=10, bg="#ffffff")
         card.grid(row=fila, column=columna, padx=5, pady=5, sticky="nsew")
-
-        if imagen_card:
-            tk.Label(card, image=imagen_card).pack()
+        
+        tk.Label(card, image=productos[nombre], bg="#ffffff").pack()
         tk.Label(card, text=nombre, font=("Arial", 12, "bold"), bg="#ffffff").pack()
         tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Arial", 10), bg="#ffffff").pack()
         stock_label = tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Arial", 10, "italic"), bg="#ffffff")
@@ -136,7 +158,7 @@ def abrir_ventana_venta():
             fila += 1
 
     # Evita que la imagen desaparezca
-    productos_frame.image = imagen_card
+    productos_frame.image = imagen
 
     # Contenido para frame_derecha_arriba (El Carrito Actual) 
     frame_derecha_arriba.grid_rowconfigure(0, weight=0)
