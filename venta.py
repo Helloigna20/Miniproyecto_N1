@@ -50,6 +50,34 @@ def abrir_ventana_venta():
         messagebox.showinfo("Carrito", "El carrito se ha vaciado con éxito")
 
     stock_labels = {}  # Almacena las referencias a los labels de stock
+    
+    def confirmar_compra():
+        total_texto = total_label.cget("text") 
+
+        try:
+            # Quitamos el "Total: $" y si hubiera comas de miles
+            total_str = total_texto.replace("Total: $", "").replace(",", "") 
+            total_float = float(total_str)
+        except ValueError:
+            messagebox.showerror("Error", "No se pudo obtener el total de la compra.")
+            return
+
+        # Valida si el carrito está vacío
+        if not carrito:
+            messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito para confirmar la compra.", parent=ventana_venta)
+            return
+        
+        # Mostrar el cuadro de diálogo de confirmación
+        confirmar = messagebox.askyesno("Confirmar Compra", f"El total de la compra es ${total_float:.2f}\n¿Desea confirmar la compra?", parent=ventana_venta)
+
+        if confirmar:
+            messagebox.showinfo("Compra Confirmada", "¡Compra realizada con éxito!", parent=ventana_venta)
+            carrito.clear()
+            actualizar_carrito()
+            
+        else:
+            messagebox.showinfo("Compra Cancelada", "La compra ha sido cancelada.", parent=ventana_venta)
+
 
     def actualizar_stock_labels():  # Actualiza los labels de stock
         for nombre, label in stock_labels.items():
@@ -158,5 +186,5 @@ def abrir_ventana_venta():
     total_label = tk.Label(frame_derecha_abajo, text="Total: $0.00", font=("Arial", 12))
     total_label.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
-    tk.Button(frame_derecha_abajo, text="Realizar Compra").grid(row=2, column=0, pady=5)
+    tk.Button(frame_derecha_abajo, text="Realizar Compra", command=confirmar_compra).grid(row=2, column=0, pady=5)
     tk.Button(frame_derecha_abajo, text="Vaciar Carrito", command=vaciar_carrito).grid(row=3, column=0, pady=5)
