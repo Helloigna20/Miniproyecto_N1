@@ -38,9 +38,9 @@ def abrir_ventana_venta():
         total_label.config(text=f"Total: ${total:.2f}")
 
     def agregar_al_carrito(nombre):  # Función para agregar al carrito
-        if productos[nombre]['stock'] > 0:
+        if int (productos[nombre]['stock']) > 0:
             carrito[nombre] = carrito.get(nombre, 0) + 1
-            productos[nombre]['stock'] -= 1
+            productos[nombre]['stock'] = int(productos[nombre]['stock']) - 1
             actualizar_carrito()
             actualizar_stock_labels()
 
@@ -120,6 +120,7 @@ def abrir_ventana_venta():
     productos_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
     productos_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)  # Hasta 4 por fila
     
+    imagenes_ventas = {}
 
     fila = 0
     columna = 0
@@ -128,24 +129,28 @@ def abrir_ventana_venta():
         ruta_imagen = detalles.get('imagen')
 
 
-        if ruta_imagen != None:
+        if ruta_imagen:
             imagen = tk.PhotoImage(file=ruta_imagen).subsample(10, 10)
         else:
             print(f"No se puedo cargar la imagen {nombre} : {ruta_imagen}")
             imagen = tk.PhotoImage(file='./Assets/producto.png').subsample(10, 10)
     
-        productos[nombre] = imagen
+        imagenes_ventas[nombre] = imagen
       
         card = tk.Frame(productos_frame, bd=2, relief="groove", padx=10, pady=10, bg="#ffffff")
         card.grid(row=fila, column=columna, padx=5, pady=5, sticky="nsew")
         
-        tk.Label(card, image=productos[nombre], bg="#ffffff").pack()
+        img_label = tk.Label(card, image=imagenes_ventas[nombre], bg="#ffffff")
+        img_label.pack()
+        img_label.image = imagenes_ventas[nombre]
+
         tk.Label(card, text=nombre, font=("Arial", 12, "bold"), bg="#ffffff").pack()
         tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Arial", 10), bg="#ffffff").pack()
         stock_label = tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Arial", 10, "italic"), bg="#ffffff")
         stock_label.pack()
         stock_labels[nombre] = stock_label  # Almacenar la referencia
-
+        
+       
         # Frame para agrupar los botones + y -
         botones_frame = tk.Frame(card, bg="#e0f7fa")
         botones_frame.pack(pady=5)
