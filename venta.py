@@ -95,6 +95,13 @@ def abrir_ventana_venta():
         for nombre, label in stock_labels.items():
             label.config(text=f"Stock: {productos[nombre]['stock']}")
 
+    def resize_canvas(event):
+        canvas.itemconfig("contenido", width=event.width)
+
+    def on_frame_configure(event):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+
     ventana_venta = tk.Toplevel()
     ventana_venta.title("Venta - Organización de Elementos")
     ventana_venta.geometry("1200x600")
@@ -115,6 +122,21 @@ def abrir_ventana_venta():
     # Frames principales (izquierda y derecha)
     frame_izquierda = tk.Frame(ventana_venta, bd=2, relief="groove")
     frame_izquierda.grid(row=0, column=0, sticky="nsew", padx=10, pady=10) # Se expande en todas direcciones en su celda
+
+    canvas = tk.Canvas(frame_izquierda)
+    scrollbar = ttk.Scrollbar(frame_izquierda, orient="vertical", command=canvas.yview)
+    scrollbar_frame = ttk.Frame(canvas)
+    canvas.configure(yscrollcommand=scrollbar.set)
+    canvas.create_window((0,0), window=scrollbar_frame, anchor="nw")
+
+
+    scrollbar_frame.bind("<Configure>", on_frame_configure)
+
+    canvas.grid(row=1, column=0, sticky="nsew")
+    scrollbar.grid(row=1, column=1, sticky="ns")
+    frame_izquierda.grid_rowconfigure(1, weight=1)
+    frame_izquierda.grid_columnconfigure(0, weight=1)
+
 
     frame_derecha = tk.Frame(ventana_venta, bd=2, relief="groove")
     frame_derecha.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
@@ -143,11 +165,16 @@ def abrir_ventana_venta():
 
     tk.Label(frame_izquierda, text="Productos Disponibles", font=("Arial", 16, "bold")).grid(row=0, column=0, pady=10, columnspan=2)
 
-    #usamos frame para manejar las cards de los productos
-    productos_frame = ttk.Frame(frame_izquierda)
-    productos_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
-    productos_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)  # Hasta 4 por fila
-    
+    #Ocurre un Bug visual al desplazarse rápido, todavia no encontre la solución :(
+
+    productos_frame = scrollbar_frame
+
+    productos_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+
+
+    canvas.create_window((0, 0), window=productos_frame, anchor="nw", tags="contenido")
+    canvas.bind("<Configure>", resize_canvas)
+
     imagenes_ventas = {}
 
     fila = 0
