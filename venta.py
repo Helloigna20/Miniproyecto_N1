@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk # Importamos ttk para widgets más modernos y estilizados como Treeview
+from tkinter import messagebox
+
 
 def abrir_ventana_venta():
     
@@ -49,6 +51,15 @@ def abrir_ventana_venta():
                 del carrito[nombre]
             actualizar_carrito()
             actualizar_stock_visual(nombre)
+        
+    def realizar_compra():
+     if carrito:
+        messagebox.showinfo("Compra Exitosa", "¡Compra realizada con éxito!")
+        carrito.clear()
+        actualizar_carrito()
+     else:
+        messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito.")
+
 
     # Configuración del menú
     menu_barra = tk.Menu(ventana_venta)
@@ -97,17 +108,38 @@ def abrir_ventana_venta():
     productos_frame = ttk.Frame(frame_izquierda)
     productos_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
     productos_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)  # Hasta 4 por fila
-    imagen_card = tk.PhotoImage(file="./Assets/producto.png").subsample(4, 4)  
+  
    
     fila = 0
     columna = 0
+
+# Cargar imágenes individuales por producto
+    from PIL import Image, ImageTk  # al inicio del archivo
+
+    # Carga de imágenes para cada producto (tamaño unificado)
+    imagenes_productos = {}
+    tamaño_imagen = (80, 80)  # tamaño deseado (ancho, alto)
+
+    for nombre in productos:
+        try:
+            ruta = f"Assets/{nombre}.png"
+            imagen_original = Image.open(ruta)
+            imagen_redimensionada = imagen_original.resize(tamaño_imagen, Image.Resampling.LANCZOS)
+            imagen_tk = ImageTk.PhotoImage(imagen_redimensionada)
+            imagenes_productos[nombre] = imagen_tk
+        except Exception as e:
+            print(f"No se pudo cargar la imagen para {nombre}: {e}")
+
+
 
     for nombre, detalles in productos.items():
         card = tk.Frame(productos_frame, bd=2, relief="groove", padx=10, pady=10, bg="#ffffff")
         card.grid(row=fila, column=columna, padx=5, pady=5, sticky="nsew")
 
-        if imagen_card:
-            tk.Label(card, image=imagen_card).pack()
+        if nombre in imagenes_productos:
+            tk.Label(card, image=imagenes_productos[nombre], bg="#ffffff").pack(pady=(0,5))
+
+
         tk.Label(card, text=nombre, font=("Arial", 12, "bold"), bg="#ffffff").pack()
         tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Arial", 10), bg="#ffffff").pack()
         
@@ -132,8 +164,9 @@ def abrir_ventana_venta():
             columna = 0
             fila += 1
 
-    # Evita que la imagen desaparezca
-    productos_frame.image = imagen_card
+    productos_frame.imagenes = imagenes_productos
+
+
 
 
     # Contenido para frame_derecha_arriba (El Carrito Actual) 
@@ -159,5 +192,8 @@ def abrir_ventana_venta():
     total_label = tk.Label(frame_derecha_abajo, text="Total: $0.00", font=("Arial", 12))
     total_label.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
-    tk.Button(frame_derecha_abajo, text="Realizar Compra").grid(row=2, column=0, pady=5)
+    tk.Button(frame_derecha_abajo, text="Realizar Compra", command=realizar_compra).grid(row=2, column=0, pady=5)
+
     tk.Button(frame_derecha_abajo, text="Vaciar Carrito").grid(row=3, column=0, pady=5)
+
+    
