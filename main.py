@@ -3,7 +3,7 @@ from venta import abrir_ventana_venta
 
 #Config. de ventana
 ventana_inicio = tk.Tk()
-ventana_inicio.geometry("600x600")
+ventana_inicio.geometry("750x750")
 ventana_inicio.attributes("-alpha",0.95)
 ventana_inicio.title("Proyecto")
 ventana_inicio.iconbitmap("Assets/Carrito.ico")
