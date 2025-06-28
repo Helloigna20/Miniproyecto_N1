@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk # Importamos ttk para widgets más modernos y estilizados como Treeview
+from tkinter import messagebox
+
 from tkinter import messagebox  # Para mostrar mensajes emergentes
 
 def abrir_ventana_venta():
@@ -185,32 +187,57 @@ def abrir_ventana_venta():
 
 
         if ruta_imagen:
-            imagen = tk.PhotoImage(file=ruta_imagen).subsample(10, 10)
+            imagen = tk.PhotoImage(file=ruta_imagen).subsample(6,6)  # Redimensiona la imagen para que se ajuste mejor
         else:
             print(f"No se puedo cargar la imagen {nombre} : {ruta_imagen}")
-            imagen = tk.PhotoImage(file='./Assets/producto.png').subsample(10, 10)
+            imagen = tk.PhotoImage(file='./Assets/producto.png').subsample(8, 8)
     
         imagenes_ventas[nombre] = imagen
       
-        card = tk.Frame(productos_frame, bd=2, relief="groove", padx=10, pady=10, bg="#ffffff")
-        card.grid(row=fila, column=columna, padx=5, pady=5, sticky="nsew")
-        
-        img_label = tk.Label(card, image=imagenes_ventas[nombre], bg="#ffffff")
-        img_label.pack()
-        img_label.image = imagenes_ventas[nombre]
+        card = tk.Frame(productos_frame,
+                        bd=0, # Borde del frame a 0
+                        relief="solid", 
+                        padx=10,
+                        pady=10,
+                        bg="#f5f5f5",
+                        highlightbackground="lightgray", # Color del borde
+                        highlightthickness=6 # Grosor del borde
+                       )
+        card.grid(row=fila, column=columna, padx=8, pady=8, sticky="nsew")
 
-        tk.Label(card, text=nombre, font=("Arial", 12, "bold"), bg="#ffffff").pack()
-        tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Arial", 10), bg="#ffffff").pack()
-        stock_label = tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Arial", 10, "italic"), bg="#ffffff")
+        # Hover effect (cambia el color de fondo al pasar el mouse)
+        def on_enter(e):
+            e.widget.config(bg="#e0e0e0") # Color más oscuro al pasar el mouse
+        def on_leave(e):
+            e.widget.config(bg="#f5f5f5")
+
+        card.bind("<Enter>", on_enter)
+        card.bind("<Leave>", on_leave)
+
+        # Imagen del producto
+        img_label = tk.Label(card, image=imagenes_ventas[nombre], bg="#f5f5f5")
+        img_label.pack(pady=3, padx=3)
+        img_label.image = imagenes_ventas[nombre]  # Previene que se pierda la referencia
+
+        # Nombre del producto
+        tk.Label(card, text=nombre, font=("Helvetica", 12, "bold"), bg="#f5f5f5", fg="gray").pack()
+
+        # Precio con color destacado
+        tk.Label(card, text=f"${detalles['precio']:.2f}", font=("Helvetica", 10), bg="#f5f5f5", fg="#4caf50").pack()
+
+        # Stock
+        stock_label = tk.Label(card, text=f"Stock: {detalles['stock']}", font=("Helvetica", 9, "italic"), bg="#f5f5f5", fg="#555")
         stock_label.pack()
         stock_labels[nombre] = stock_label  # Almacenar la referencia
-        
-       
-        # Frame para agrupar los botones + y -
-        botones_frame = tk.Frame(card, bg="#e0f7fa")
+
+        # Botones + y - con colores modernos
+        botones_frame = tk.Frame(card, bg="#f5f5f5")
         botones_frame.pack(pady=5)
-        tk.Button(botones_frame, text="+", width=3, bg="#b2ebf2", command=lambda n=nombre: agregar_al_carrito(n)).pack(side="left", padx=2)
-        tk.Button(botones_frame, text="-", width=3, bg="#ffcdd2", command=lambda n=nombre: quitar_del_carrito(n)).pack(side="left", padx=2)
+
+        tk.Button(botones_frame, text="+", width=3, bg="white", fg="Grey", relief="flat", command=lambda n=nombre: agregar_al_carrito(n)).pack(side="left", padx=2)
+        tk.Button(botones_frame, text="-", width=3, bg="white", fg="Grey", relief="flat", command=lambda n=nombre: quitar_del_carrito(n)).pack(side="left", padx=2)
+
+
 
         columna += 1
         if columna > 3:  # 4 columnas
