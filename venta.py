@@ -182,25 +182,6 @@ def abrir_ventana_venta():
     fila = 0
     columna = 0
 
-# Cargar imágenes individuales por producto
-    from PIL import Image, ImageTk  # al inicio del archivo
-
-    # Carga de imágenes para cada producto (tamaño unificado)
-    imagenes_productos = {}
-    tamaño_imagen = (80, 80)  # tamaño deseado (ancho, alto)
-
-    for nombre in productos:
-        try:
-            ruta = f"Assets/{nombre}.png"
-            imagen_original = Image.open(ruta)
-            imagen_redimensionada = imagen_original.resize(tamaño_imagen, Image.Resampling.LANCZOS)
-            imagen_tk = ImageTk.PhotoImage(imagen_redimensionada)
-            imagenes_productos[nombre] = imagen_tk
-        except Exception as e:
-            print(f"No se pudo cargar la imagen para {nombre}: {e}")
-
-
-
     for nombre, detalles in productos.items():
         ruta_imagen = detalles.get('imagen')
 
