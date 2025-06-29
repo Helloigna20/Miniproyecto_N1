@@ -234,8 +234,8 @@ def abrir_ventana_venta():
         botones_frame = tk.Frame(card, bg="#f5f5f5")
         botones_frame.pack(pady=5)
 
-        tk.Button(botones_frame, text="+", width=3, bg="white", fg="Grey", relief="flat", command=lambda n=nombre: agregar_al_carrito(n)).pack(side="left", padx=2)
-        tk.Button(botones_frame, text="-", width=3, bg="white", fg="Grey", relief="flat", command=lambda n=nombre: quitar_del_carrito(n)).pack(side="left", padx=2)
+        tk.Button(botones_frame, text="+", font=("Arial", 14), width=3, bg= "white", fg="grey", relief="flat", command=lambda n=nombre: agregar_al_carrito(n)).pack(side="left", padx=2)
+        tk.Button(botones_frame, text="-", font=("Arial", 14), width=3, bg= "white", fg="grey", relief="flat", command=lambda n=nombre: quitar_del_carrito(n)).pack(side="left", padx=2)
 
 
 
