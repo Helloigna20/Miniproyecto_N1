@@ -14,6 +14,9 @@ En nuestro grupo decidimos desarrollar una interfaz gráfica en Python con Tkint
 - [Romina Noemí Gimenez](https://github.com/Roming333)
 - [Sahid Nahuel Esquivel Altamirano](https://github.com/Sahid-cyber)
 
+## 🖼️Capturas
+
+<img src="./Assets/captura de pantalla.png" alt="Captura del carrito" width="600"/>
 
 ## 🔨Tecnologías usadas
 
