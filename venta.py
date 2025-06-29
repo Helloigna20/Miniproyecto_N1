@@ -12,7 +12,7 @@ def abrir_ventana_venta():
         "Fideos tallarín": {"precio": 1140, "stock": 20, "imagen": "./Assets/fideos_tallarin.png"},
         "Fideos codito": {"precio": 980.50, "stock": 15, "imagen": "./Assets/fideos_codito.png"},
         "Fideos tirabuzon": {"precio": 1200, "stock": 15, "imagen": "./Assets/fideos_tirabuzon.png"},
-        "Arroz": {"precio": 1750, "stock": 20, "imagen": "./Assets/arroz.png"},
+        "Arroz": {"precio": 1750, "stock": 20, "imagen": "./Assets/arroz2.png"},
         "Leche entera": {"precio": 2500, "stock": 12, "imagen": "./Assets/leche_entera.png"},
         "Leche descremada": {"precio": 2750, "stock": 12, "imagen": "./Assets/leche_descremada.png"},
         "Queso cremoso (500 g)": {"precio": 5500, "stock": 10, "imagen": "./Assets/queso_cremoso.png"},
